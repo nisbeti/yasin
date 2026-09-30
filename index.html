@@ -392,7 +392,7 @@
     <ul>
       <li>Sūrah Yā-Sīn Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</li>
       <li>IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>. Font served by the <a href="https://quran.foundation" target="_blank" rel="noopener">Quran Foundation</a>.</li>
-      <li>Sūrah Yā-Sīn English translation: Marmaduke Pickthall, 1930.</li>
+      <li>Sūrah Yā-Sīn English translation: Aisha and Abdalhaqq Bewley, <em>The Noble Qur'an</em>, via <a href="https://hadithunlocked.com/quran/en-bewley" target="_blank" rel="noopener">Hadith Unlocked</a>.</li>
       <li>Urdu translation: Fateh Muhammad Jalandhry, via <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a>.</li>
       <li>Recitation: Mishary al-Afasy, via <a href="https://everyayah.com" target="_blank" rel="noopener">EveryAyah.com</a>.</li>
       <li>Amiri and Amiri Quran fonts: Khaled Hosny, under the SIL Open Font License, via Google Fonts.</li>
@@ -541,7 +541,7 @@ function buildVersePage(verses, position, total, lang) {
   const credit = isOpening
     ? `<span class="credit">${lang === "ar"
         ? `<span class="when-amiri">النص: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل</a></span><span class="when-indopak" dir="ltr">${indopakCredit}</span>`
-        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> <span class="when-en">Translation: M. M. Pickthall, 1930.</span><span class="when-ur" lang="ur" dir="rtl">ترجمہ: فتح محمد جالندھری</span>`}</span>`
+        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> <span class="when-en">Translation: Aisha and Abdalhaqq Bewley.</span><span class="when-ur" lang="ur" dir="rtl">ترجمہ: فتح محمد جالندھری</span>`}</span>`
     : "";
   const play = `<button type="button" class="listen play-verses" data-from="${first}" data-to="${last}" data-lang="${lang}">${playLabelHtml(lang, false)}</button>`;
   page.innerHTML = cardHtml(positionLabel, lang, body, play + credit);
