@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
 <style>
   @font-face {
     font-family: "IndoPak Nastaleeq";
@@ -190,7 +190,22 @@
     font-size: calc(clamp(1.7rem, 4.8vw, 2.4rem) * var(--text-scale, 1));
   }
 
-  .font-toggle {
+  /* Translation choice: English (default) or Urdu. */
+  .when-ur { display: none; }
+  :root[data-trans="ur"] .when-en { display: none; }
+  :root[data-trans="ur"] .when-ur { display: revert; }
+  .page.quran.english .text .when-ur {
+    font-family: "Noto Nastaliq Urdu", "Amiri", serif;
+    font-size: calc(clamp(1.1rem, 3vw, 1.35rem) * var(--text-scale, 1));
+    line-height: 2.5;
+    text-align: right;
+  }
+  .page.quran.english .when-ur .basmalah { font-style: normal; }
+  .credit .when-ur { font-family: "Noto Nastaliq Urdu", "Amiri", serif; }
+  :root[data-trans="ur"] .credit .when-ur { display: block; }
+  .listen { white-space: nowrap; }
+
+  .font-toggle, .lang-toggle {
     background: none;
     border: 1px solid var(--line);
     border-radius: 999px;
@@ -326,7 +341,7 @@
   /* Hover styles only on devices with a real pointer; iOS otherwise keeps them after a tap. */
   @media (hover: hover) {
     #themeToggle:hover { color: var(--accent); border-color: var(--accent); }
-    .font-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .font-toggle:hover, .lang-toggle:hover { color: var(--accent); border-color: var(--accent); }
     .size-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
     #aboutClose:hover { color: var(--accent); border-color: var(--accent); }
     .nav:hover { opacity: 1; border-color: var(--accent); color: var(--accent); }
@@ -361,15 +376,16 @@
       <h2 id="aboutTitle">About</h2>
       <button id="aboutClose" type="button" aria-label="Close">×</button>
     </header>
-    <p>Sūrah Yā-Sīn, five verses a page: Arabic first, then English.</p>
+    <p>Sūrah Yā-Sīn, five verses a page: Arabic first, then English or Urdu.</p>
 
     <h3>How to use</h3>
     <ul>
       <li>Swipe to move between pages. On a computer, use the side buttons or the arrow keys.</li>
       <li>Tap ▶ Listen to hear a page recited, or tap a verse number to hear that verse.</li>
       <li>Tap the font name on an Arabic page to switch between Amiri and IndoPak.</li>
+      <li>Tap English on a translation page to switch to Urdu, and back.</li>
       <li>Use − and + to change the text size.</li>
-      <li>Your place, font, text size and theme are remembered on this device.</li>
+      <li>Your place, font, translation, text size and theme are remembered on this device.</li>
     </ul>
 
     <h3>Credits</h3>
@@ -377,6 +393,7 @@
       <li>Sūrah Yā-Sīn Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</li>
       <li>IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>. Font served by the <a href="https://quran.foundation" target="_blank" rel="noopener">Quran Foundation</a>.</li>
       <li>Sūrah Yā-Sīn English translation: Marmaduke Pickthall, 1930.</li>
+      <li>Urdu translation: Fateh Muhammad Jalandhry, via <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a>.</li>
       <li>Recitation: Mishary al-Afasy, via <a href="https://everyayah.com" target="_blank" rel="noopener">EveryAyah.com</a>.</li>
       <li>Amiri and Amiri Quran fonts: Khaled Hosny, under the SIL Open Font License, via Google Fonts.</li>
     </ul>
@@ -410,6 +427,7 @@ const about = document.getElementById("about");
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 const THEME_KEY = "yasin:theme";
 const FONT_KEY = "yasin:font";
+const TRANS_KEY = "yasin:translation";
 const TEXT_SCALE_KEY = "yasin:textScale";
 const TEXT_SCALES = [0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5, 1.7];
 const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
@@ -433,6 +451,10 @@ function savedIndex() {
 
 function saveIndex(index) {
   writeStorage(POSITION_KEY, String(index));
+}
+
+function toUrduDigits(number) {
+  return String(number).replace(/\d/g, digit => "۰۱۲۳۴۵۶۷۸۹"[digit]);
 }
 
 function toArabicDigits(number) {
@@ -467,7 +489,8 @@ function createPage(lang, extraClass = "") {
 }
 
 function cardHtml(positionLabel, lang, body, foot = "") {
-  const corner = lang !== "ar" ? `<span class="lang">English</span>` : !HAS_INDOPAK ? "" : `<button type="button" class="font-toggle" aria-label="Switch Arabic font"><span class="when-amiri">Amiri</span><span class="when-indopak">IndoPak</span></button>`;
+  const corner = lang !== "ar"
+    ? `<button type="button" class="lang-toggle" aria-label="Switch between English and Urdu"><span class="when-en">English</span><span class="when-ur" lang="ur">اردو</span></button>` : !HAS_INDOPAK ? "" : `<button type="button" class="font-toggle" aria-label="Switch Arabic font"><span class="when-amiri">Amiri</span><span class="when-indopak">IndoPak</span></button>`;
   return `
     <article class="card">
       <div class="meta">
@@ -507,18 +530,20 @@ function buildVersePage(verses, position, total, lang) {
       <div class="when-amiri">${isOpening ? `<h2 class="basmalah">${markJalalahArabic(SURAH.basmalah_ar)}</h2>` : ""}<p>${uthmani}</p></div>
       ${HAS_INDOPAK ? `<div class="when-indopak">${isOpening ? `<h2 class="basmalah">${markJalalahArabic(SURAH.basmalah_ar_indopak)}</h2>` : ""}<p>${indopak}</p></div>` : ""}`;
   } else {
-    const text = verses.map(verse => `<p><span class="verse-num" ${verseAttrs(verse.n)}>${verse.n}</span>${markJalalahEnglish(verse.en)}</p>`).join("");
-    body = `${isOpening ? `<h2 class="basmalah">${markJalalahEnglish(SURAH.basmalah_en)}</h2>` : ""}${text}`;
+    const english = verses.map(verse => `<p><span class="verse-num" ${verseAttrs(verse.n)}>${verse.n}</span>${markJalalahEnglish(verse.en)}</p>`).join("");
+    const urdu = verses.map(verse => `<p><span class="verse-num" ${verseAttrs(verse.n)}>${toUrduDigits(verse.n)}</span>${markJalalahArabic(verse.ur)}</p>`).join("");
+    body = `
+      <div class="when-en">${isOpening ? `<h2 class="basmalah">${markJalalahEnglish(SURAH.basmalah_en)}</h2>` : ""}${english}</div>
+      <div class="when-ur" lang="ur" dir="rtl">${isOpening ? `<h2 class="basmalah">${markJalalahArabic(SURAH.basmalah_ur)}</h2>` : ""}${urdu}</div>`;
   }
 
   const indopakCredit = 'IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>.';
   const credit = isOpening
     ? `<span class="credit">${lang === "ar"
         ? `<span class="when-amiri">النص: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل</a></span><span class="when-indopak" dir="ltr">${indopakCredit}</span>`
-        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> Translation: M. M. Pickthall, 1930.`}</span>`
+        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> <span class="when-en">Translation: M. M. Pickthall, 1930.</span><span class="when-ur" lang="ur" dir="rtl">ترجمہ: فتح محمد جالندھری</span>`}</span>`
     : "";
-  const playLabel = lang === "ar" ? "▶ استمع" : "▶ Listen";
-  const play = `<button type="button" class="listen play-verses" data-from="${first}" data-to="${last}" data-lang="${lang}">${playLabel}</button>`;
+  const play = `<button type="button" class="listen play-verses" data-from="${first}" data-to="${last}" data-lang="${lang}">${playLabelHtml(lang, false)}</button>`;
   page.innerHTML = cardHtml(positionLabel, lang, body, play + credit);
   return page;
 }
@@ -616,9 +641,16 @@ const verseFile = (surah, ayah) => `${VERSE_AUDIO}${String(surah).padStart(3, "0
 const reciter = new Audio();
 let recitation = null;  /* { button, queue } while playing */
 
+/* Translation pages carry both an English and an Urdu label; the chosen translation decides which shows. */
+function playLabelHtml(lang, playing) {
+  if (lang === "ar") { return playing ? "■ إيقاف" : "▶ استمع"; }
+  return playing
+    ? `<span class="when-en">■ Stop</span><span class="when-ur" lang="ur">■ روکیں</span>`
+    : `<span class="when-en">▶ Listen</span><span class="when-ur" lang="ur">▶ سنیں</span>`;
+}
+
 function labelPlayButton(button, playing) {
-  const ar = button.dataset.lang === "ar";
-  button.textContent = playing ? (ar ? "■ إيقاف" : "■ Stop") : (ar ? "▶ استمع" : "▶ Listen");
+  button.innerHTML = playLabelHtml(button.dataset.lang, playing);
 }
 
 function stopRecitation() {
@@ -691,6 +723,21 @@ track.addEventListener("click", event => {
   applyFont();
 });
 
+/* ---------- Translation ---------- */
+function applyTranslation() {
+  if (readStorage(TRANS_KEY) === "ur") {
+    document.documentElement.setAttribute("data-trans", "ur");
+  } else {
+    document.documentElement.removeAttribute("data-trans");
+  }
+}
+
+track.addEventListener("click", event => {
+  if (!event.target.closest(".lang-toggle")) { return; }
+  writeStorage(TRANS_KEY, readStorage(TRANS_KEY) === "ur" ? "en" : "ur");
+  applyTranslation();
+});
+
 /* ---------- About ---------- */
 document.getElementById("aboutBtn").addEventListener("click", () => about.showModal());
 document.getElementById("aboutClose").addEventListener("click", () => about.close());
@@ -758,6 +805,7 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
 
 applyTheme();
 applyFont();
+applyTranslation();
 applyTextScale();
 render();
 livePageVersion().then(version => { loadedPageVersion = version; });
