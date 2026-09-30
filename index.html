@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f1e7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="يس">
+<title>سورة يس</title>
+<link rel="manifest" href="manifest.webmanifest?v=1">
+<link rel="icon" href="icon.svg?v=1" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: "IndoPak Nastaleeq";
+    src: url("https://verses.quran.foundation/fonts/quran/hafs/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff2") format("woff2"),
+         url("https://verses.quran.foundation/fonts/quran/hafs/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff") format("woff");
+    font-display: swap;
+  }
+  :root {
+    --bg: #f6f1e7;
+    --card: #fffdf8;
+    --ink: #2a251d;
+    --muted: #7d7462;
+    --accent: #b5542a;
+    --jalalah: #c1272d;
+    --line: #e4dccb;
+    --shadow: 0 10px 30px rgba(60, 40, 10, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1a16;
+      --card: #26231e;
+      --ink: #efe7d6;
+      --muted: #a89e88;
+      --accent: #e08a5c;
+      --jalalah: #ff6b64;
+      --line: #3a352c;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a16;
+    --card: #26231e;
+    --ink: #efe7d6;
+    --muted: #a89e88;
+    --accent: #e08a5c;
+    --jalalah: #ff6b64;
+    --line: #3a352c;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  header {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .5rem;
+    padding: calc(.75rem + env(safe-area-inset-top)) 1rem .5rem;
+  }
+  #title { margin: 0; font-size: inherit; font-weight: inherit; line-height: 1.3; justify-self: start; min-width: 0; }
+  #title .ar { font-size: 1.3rem; font-weight: 700; display: block; white-space: nowrap; }
+  #title .en { font-size: .75rem; color: var(--muted); display: block; letter-spacing: .04em; white-space: nowrap; }
+  .header-end {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    justify-self: end;
+  }
+  #counter {
+    font-size: .95rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #themeToggle {
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #track {
+    flex: 1 1 auto;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  #track::-webkit-scrollbar { display: none; }
+
+  .page {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow-y: auto;
+    padding: .5rem 1.25rem 1.25rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1.5rem 1.25rem;
+  }
+  .card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: .95rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .card .meta .lang { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+  .card .body {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-start;
+    padding: 1.25rem 0;
+  }
+  .card .text { width: 100%; margin: 0; }
+  .page.english .card { direction: ltr; }
+  .card .text p { margin: 0 0 1em; }
+  .card .text p:last-child { margin-bottom: 0; }
+  .page.quran.arabic .text {
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: calc(clamp(1.55rem, 4.4vw, 2.2rem) * var(--text-scale, 1));
+    line-height: 2.3;
+    text-align: justify;
+    text-align-last: right;
+  }
+  .page.quran.english .text { font-size: calc(clamp(1.1rem, 3vw, 1.4rem) * var(--text-scale, 1)); line-height: 1.65; text-align: left; }
+  .page.quran .basmalah { text-align: center; color: var(--accent); margin: 0 0 1rem; font-weight: 400; font-size: 1.1em; }
+  .page.quran.english .basmalah { font-style: italic; font-size: 1em; }
+  .ayah-end { color: var(--accent); white-space: nowrap; }
+  .verse-num {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: .8em;
+    margin-inline-end: .35em;
+    font-variant-numeric: tabular-nums;
+  }
+  .jalalah { color: var(--jalalah); }
+  .credit { color: var(--muted); font-size: .85rem; line-height: 1.5; }
+  .credit a { color: inherit; }
+
+  /* Arabic font choice: Amiri (default) or IndoPak Nastaleeq. */
+  .when-indopak { display: none; }
+  :root[data-font="indopak"] .when-amiri { display: none; }
+  :root[data-font="indopak"] .when-indopak { display: revert; }
+  :root[data-font="indopak"] .page.quran.arabic .text {
+    font-family: "IndoPak Nastaleeq", "Amiri Quran", serif;
+    font-size: calc(clamp(1.7rem, 4.8vw, 2.4rem) * var(--text-scale, 1));
+  }
+
+  .font-toggle {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font: inherit;
+    font-size: .8rem;
+    letter-spacing: .04em;
+    line-height: 1.4;
+    padding: .1rem .65rem;
+    cursor: pointer;
+    direction: ltr;
+  }
+  .card .foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: .75rem;
+    border-top: 1px solid var(--line);
+    font-size: 1rem;
+  }
+  .listen {
+    margin-inline-end: auto;
+    color: var(--accent);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .listen:hover { text-decoration: underline; }
+  button.listen { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+  [data-ayah] { cursor: pointer; }
+  .card .foot .credit { flex: 1 1 auto; }
+
+  footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    direction: ltr;
+    padding: 0 1.25rem calc(.5rem + env(safe-area-inset-bottom));
+  }
+  #progress { flex: 1 1 auto; }
+  .size-btn {
+    flex: 0 0 auto;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    font-family: inherit;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .size-btn { font-size: 1.3rem; }
+  #aboutBtn { font-size: 1.05rem; font-style: italic; font-weight: 700; margin-inline-end: .25rem; }
+
+  #about {
+    width: min(34rem, calc(100% - 2rem));
+    max-height: 85dvh;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    direction: ltr;
+    text-align: left;
+  }
+  #about::backdrop { background: rgba(20, 15, 5, .55); }
+  #about .about-inner { padding: 1.25rem 1.5rem 1.5rem; overflow-y: auto; max-height: 85dvh; }
+  #about header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin-bottom: .5rem;
+  }
+  #about h2 { margin: 0; font-size: 1.4rem; }
+  #about h3 { margin: 1.25rem 0 .4rem; font-size: 1.05rem; color: var(--accent); }
+  #about p, #about li { font-size: 1rem; line-height: 1.55; margin: 0 0 .5rem; }
+  #about ul { margin: 0; padding-left: 1.2rem; }
+  #about a { color: var(--accent); }
+  #aboutClose {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--muted);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .size-btn:disabled { opacity: .35; cursor: default; }
+  #progress {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  #progress > div {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width .25s ease;
+  }
+
+  .nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .9;
+  }
+  .nav:disabled { opacity: .25; cursor: default; }
+  #nextBtn { left: .5rem; }
+  #prevBtn { right: .5rem; }
+  @media (pointer: coarse) { .nav { display: none; } }
+  /* Hover styles only on devices with a real pointer; iOS otherwise keeps them after a tap. */
+  @media (hover: hover) {
+    #themeToggle:hover { color: var(--accent); border-color: var(--accent); }
+    .font-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .size-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+    #aboutClose:hover { color: var(--accent); border-color: var(--accent); }
+    .nav:hover { opacity: 1; border-color: var(--accent); color: var(--accent); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="title">
+    <span class="ar">سورة يس</span>
+    <span class="en" lang="en">Sūrah Yā-Sīn</span>
+  </h1>
+  <div class="header-end">
+    <div id="counter" aria-live="polite"></div>
+    <button id="themeToggle" type="button" aria-label="Switch to dark mode"></button>
+  </div>
+</header>
+
+<main id="track" aria-label="Pages"></main>
+
+<footer>
+  <button class="size-btn" id="aboutBtn" type="button" aria-label="About and credits" aria-haspopup="dialog">i</button>
+  <button class="size-btn" id="smallerText" type="button" aria-label="Smaller text">−</button>
+  <div id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div></div></div>
+  <button class="size-btn" id="largerText" type="button" aria-label="Larger text">+</button>
+</footer>
+
+<dialog id="about" aria-labelledby="aboutTitle" lang="en">
+  <div class="about-inner">
+    <header>
+      <h2 id="aboutTitle">About</h2>
+      <button id="aboutClose" type="button" aria-label="Close">×</button>
+    </header>
+    <p>Sūrah Yā-Sīn, five verses a page: Arabic first, then English.</p>
+
+    <h3>How to use</h3>
+    <ul>
+      <li>Swipe to move between pages. On a computer, use the side buttons or the arrow keys.</li>
+      <li>Tap ▶ Listen to hear a page recited, or tap a verse number to hear that verse.</li>
+      <li>Use − and + to change the text size.</li>
+      <li>Your place, text size and theme are remembered on this device.</li>
+    </ul>
+
+    <h3>Credits</h3>
+    <ul>
+      <li>Sūrah Yā-Sīn Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</li>
+      <li>Sūrah Yā-Sīn English translation: Marmaduke Pickthall, 1930.</li>
+      <li>Recitation: Mishary al-Afasy, via <a href="https://everyayah.com" target="_blank" rel="noopener">EveryAyah.com</a>.</li>
+      <li>Amiri and Amiri Quran fonts: Khaled Hosny, under the SIL Open Font License, via Google Fonts.</li>
+    </ul>
+  </div>
+</dialog>
+
+<button class="nav" id="prevBtn" type="button" aria-label="Previous page">&#x276F;</button>
+<button class="nav" id="nextBtn" type="button" aria-label="Next page">&#x276E;</button>
+
+<script src="yasin.js"></script>
+<script>
+/* ---------- App ---------- */
+const VERSES_PER_PAGE = 5;
+const PAGE_GROUPS = [];
+for (let i = 0; i < SURAH.verses.length; i += VERSES_PER_PAGE) {
+  PAGE_GROUPS.push(SURAH.verses.slice(i, i + VERSES_PER_PAGE));
+}
+
+const POSITION_KEY = "yasin:position";
+/* The IndoPak font switch appears once the verses carry ar_indopak text. */
+const HAS_INDOPAK = SURAH.verses.every(verse => verse.ar_indopak);
+
+const track = document.getElementById("track");
+const counter = document.getElementById("counter");
+const progressBar = document.querySelector("#progress > div");
+const progress = document.getElementById("progress");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const themeToggle = document.getElementById("themeToggle");
+const about = document.getElementById("about");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+const THEME_KEY = "yasin:theme";
+const FONT_KEY = "yasin:font";
+const TEXT_SCALE_KEY = "yasin:textScale";
+const TEXT_SCALES = [0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5, 1.7];
+const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+let pages = [];
+let currentIndex = 0;
+let observer = null;
+
+function readStorage(key) {
+  try { return localStorage.getItem(key); } catch (_) { return null; }
+}
+
+function writeStorage(key, value) {
+  try { localStorage.setItem(key, value); } catch (_) { /* storage unavailable */ }
+}
+
+function savedIndex() {
+  const value = parseInt(readStorage(POSITION_KEY), 10);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function saveIndex(index) {
+  writeStorage(POSITION_KEY, String(index));
+}
+
+function toArabicDigits(number) {
+  return String(number).replace(/\d/g, digit => "٠١٢٣٤٥٦٧٨٩"[digit]);
+}
+
+/* Lafz al-jalalah: any word whose letters are Allah, with an optional wa/fa, bi/ta/ka or li prefix, or Allahumma. */
+const JALALAH_PATTERN = /^(?:[وف]?[بتك]?الله|[وف]?لله)م?$/;
+
+function arabicLetters(word) {
+  return word.replace(/\u0671/g, "\u0627").replace(/[^\u0621-\u064A]/g, "");
+}
+
+function markJalalahArabic(text) {
+  return text.split(/(\s+)/).map(part => {
+    if (!JALALAH_PATTERN.test(arabicLetters(part))) { return part; }
+    const [, word, punctuation] = part.match(/^(.*?)([،؛.:!؟,]*)$/);
+    return `<span class="jalalah">${word}</span>${punctuation}`;
+  }).join("");
+}
+
+function markJalalahEnglish(text) {
+  return text.replace(/\bAllah\b/g, '<span class="jalalah">Allah</span>');
+}
+
+function createPage(lang, extraClass = "") {
+  const page = document.createElement("section");
+  page.className = `page ${lang === "ar" ? "arabic" : "english"} ${extraClass}`.trim();
+  page.setAttribute("lang", lang);
+  page.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  return page;
+}
+
+function cardHtml(positionLabel, lang, body, foot = "") {
+  const corner = lang !== "ar" ? `<span class="lang">English</span>` : !HAS_INDOPAK ? "" : `<button type="button" class="font-toggle" aria-label="Switch Arabic font"><span class="when-amiri">Amiri</span><span class="when-indopak">IndoPak</span></button>`;
+  return `
+    <article class="card">
+      <div class="meta">
+        <span>${positionLabel}</span>
+        ${corner}
+      </div>
+      <div class="body">
+        <div class="text">${body}</div>
+      </div>
+      ${foot ? `<div class="foot">${foot}</div>` : ""}
+    </article>`;
+}
+
+/* A verse number doubles as a button that recites that verse. */
+function verseAttrs(n) {
+  return `data-ayah="${n}" role="button" tabindex="0" aria-label="Play verse ${n}"`;
+}
+
+function buildVersePage(verses, position, total, lang) {
+  const page = createPage(lang, "quran");
+  const first = verses[0].n;
+  const last = verses[verses.length - 1].n;
+  const positionLabel = lang === "ar" ? `الآيات ${first}–${last}` : `Verses ${first}–${last}`;
+  const isOpening = first === 1;
+
+  let body;
+  if (lang === "ar") {
+    const uthmani = verses
+      .map(verse => `${markJalalahArabic(verse.ar)} <span class="ayah-end" ${verseAttrs(verse.n)}>&#x06DD;${toArabicDigits(verse.n)}</span>`)
+      .join(" ");
+    /* The IndoPak text carries its own numbered verse icons, drawn by the IndoPak font. */
+    /* The verse-end sign is one private-use character (U+F500 + verse − 1); wrapping it keeps its look. */
+    const indopak = !HAS_INDOPAK ? "" : verses
+      .map(verse => markJalalahArabic(verse.ar_indopak).replace(/[\uF500-\uF5FF]$/, sign => `<span ${verseAttrs(verse.n)}>${sign}</span>`))
+      .join(" ");
+    body = `
+      <div class="when-amiri">${isOpening ? `<h2 class="basmalah">${markJalalahArabic(SURAH.basmalah_ar)}</h2>` : ""}<p>${uthmani}</p></div>
+      ${HAS_INDOPAK ? `<div class="when-indopak">${isOpening ? `<h2 class="basmalah">${markJalalahArabic(SURAH.basmalah_ar_indopak)}</h2>` : ""}<p>${indopak}</p></div>` : ""}`;
+  } else {
+    const text = verses.map(verse => `<p><span class="verse-num" ${verseAttrs(verse.n)}>${verse.n}</span>${markJalalahEnglish(verse.en)}</p>`).join("");
+    body = `${isOpening ? `<h2 class="basmalah">${markJalalahEnglish(SURAH.basmalah_en)}</h2>` : ""}${text}`;
+  }
+
+  const indopakCredit = 'IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>.';
+  const credit = isOpening
+    ? `<span class="credit">${lang === "ar"
+        ? `<span class="when-amiri">النص: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل</a></span><span class="when-indopak" dir="ltr">${indopakCredit}</span>`
+        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> Translation: M. M. Pickthall, 1930.`}</span>`
+    : "";
+  const playLabel = lang === "ar" ? "▶ استمع" : "▶ Listen";
+  const play = `<button type="button" class="listen play-verses" data-from="${first}" data-to="${last}" data-lang="${lang}">${playLabel}</button>`;
+  page.innerHTML = cardHtml(positionLabel, lang, body, play + credit);
+  return page;
+}
+
+function render() {
+  stopRecitation();
+  if (observer) { observer.disconnect(); }
+  track.innerHTML = "";
+  pages = [];
+  PAGE_GROUPS.forEach((verses, i) => {
+    pages.push(buildVersePage(verses, i + 1, PAGE_GROUPS.length, "ar"));
+    pages.push(buildVersePage(verses, i + 1, PAGE_GROUPS.length, "en"));
+  });
+  pages.forEach(p => track.appendChild(p));
+
+  currentIndex = Math.min(savedIndex(), pages.length - 1);
+  goTo(currentIndex, "instant");
+  updateUi();
+
+  observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        currentIndex = pages.indexOf(entry.target);
+        saveIndex(currentIndex);
+        updateUi();
+      }
+    });
+  }, { root: track, threshold: 0.6 });
+  pages.forEach(p => observer.observe(p));
+}
+
+function goTo(index, behavior = "smooth") {
+  index = Math.max(0, Math.min(index, pages.length - 1));
+  pages[index].scrollIntoView({ behavior, inline: "start", block: "nearest" });
+}
+
+function updateUi() {
+  counter.textContent = `${Math.floor(currentIndex / 2) + 1} / ${pages.length / 2}`;
+  const percent = ((currentIndex + 1) / pages.length) * 100;
+  progressBar.style.width = `${percent}%`;
+  progress.setAttribute("aria-valuenow", String(Math.round(percent)));
+  prevBtn.disabled = currentIndex === 0;
+  nextBtn.disabled = currentIndex === pages.length - 1;
+}
+
+nextBtn.addEventListener("click", () => goTo(currentIndex + 1));
+prevBtn.addEventListener("click", () => goTo(currentIndex - 1));
+
+document.addEventListener("keydown", event => {
+  if (about.open) { return; }
+  if (event.key === "ArrowLeft") { goTo(currentIndex + 1); }
+  if (event.key === "ArrowRight") { goTo(currentIndex - 1); }
+});
+
+/* Keep the snapped page aligned after rotation or window resize. */
+window.addEventListener("resize", () => goTo(currentIndex, "instant"));
+
+/* ---------- Theme ---------- */
+function savedTheme() {
+  try { return localStorage.getItem(THEME_KEY); } catch (_) { return null; }
+}
+
+function currentTheme() {
+  const saved = savedTheme();
+  if (saved === "light" || saved === "dark") { return saved; }
+  return systemDark.matches ? "dark" : "light";
+}
+
+function applyTheme() {
+  const saved = savedTheme();
+  if (saved === "light" || saved === "dark") {
+    document.documentElement.setAttribute("data-theme", saved);
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
+  const dark = currentTheme() === "dark";
+  themeToggle.textContent = dark ? "\u2600" : "\u263E";
+  themeToggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  themeColorMeta.setAttribute("content", dark ? "#1c1a16" : "#f6f1e7");
+}
+
+themeToggle.addEventListener("click", () => {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  try { localStorage.setItem(THEME_KEY, next); } catch (_) { /* storage unavailable */ }
+  applyTheme();
+});
+
+systemDark.addEventListener("change", applyTheme);
+
+/* ---------- Sūrah recitation ---------- */
+/* Mishary al-Afasy, one file per verse, from EveryAyah.com. Plays a page's verses in order,
+   starting with the basmalah on the first page. */
+const VERSE_AUDIO = "https://everyayah.com/data/Alafasy_128kbps/";
+const verseFile = (surah, ayah) => `${VERSE_AUDIO}${String(surah).padStart(3, "0")}${String(ayah).padStart(3, "0")}.mp3`;
+const reciter = new Audio();
+let recitation = null;  /* { button, queue } while playing */
+
+function labelPlayButton(button, playing) {
+  const ar = button.dataset.lang === "ar";
+  button.textContent = playing ? (ar ? "■ إيقاف" : "■ Stop") : (ar ? "▶ استمع" : "▶ Listen");
+}
+
+function stopRecitation() {
+  if (!recitation) { return; }
+  reciter.pause();
+  if (recitation.button.classList.contains("play-verses")) { labelPlayButton(recitation.button, false); }
+  recitation = null;
+}
+
+function playNextVerse() {
+  if (!recitation) { return; }
+  const next = recitation.queue.shift();
+  if (!next) { stopRecitation(); return; }
+  reciter.src = next;
+  reciter.play().catch(stopRecitation);
+}
+
+reciter.addEventListener("ended", playNextVerse);
+reciter.addEventListener("error", stopRecitation);
+
+function playVerse(target) {
+  const wasPlaying = recitation && recitation.button === target;
+  stopRecitation();
+  if (wasPlaying) { return; }
+  recitation = { button: target, queue: [verseFile(SURAH.number, Number(target.dataset.ayah))] };
+  playNextVerse();
+}
+
+track.addEventListener("click", event => {
+  const verse = event.target.closest("[data-ayah]");
+  if (verse) { playVerse(verse); }
+});
+
+track.addEventListener("keydown", event => {
+  const verse = event.target.closest("[data-ayah]");
+  if (verse && (event.key === "Enter" || event.key === " ")) {
+    event.preventDefault();
+    playVerse(verse);
+  }
+});
+
+track.addEventListener("click", event => {
+  const button = event.target.closest(".play-verses");
+  if (!button) { return; }
+  const wasPlaying = recitation && recitation.button === button;
+  stopRecitation();
+  if (wasPlaying) { return; }
+  const from = Number(button.dataset.from);
+  const to = Number(button.dataset.to);
+  const queue = [];
+  if (from === 1) { queue.push(verseFile(1, 1)); }
+  for (let ayah = from; ayah <= to; ayah++) { queue.push(verseFile(SURAH.number, ayah)); }
+  recitation = { button, queue };
+  labelPlayButton(button, true);
+  playNextVerse();
+});
+
+/* ---------- Arabic font ---------- */
+function applyFont() {
+  if (HAS_INDOPAK && readStorage(FONT_KEY) === "indopak") {
+    document.documentElement.setAttribute("data-font", "indopak");
+  } else {
+    document.documentElement.removeAttribute("data-font");
+  }
+}
+
+track.addEventListener("click", event => {
+  if (!event.target.closest(".font-toggle")) { return; }
+  writeStorage(FONT_KEY, readStorage(FONT_KEY) === "indopak" ? "amiri" : "indopak");
+  applyFont();
+});
+
+/* ---------- About ---------- */
+document.getElementById("aboutBtn").addEventListener("click", () => about.showModal());
+document.getElementById("aboutClose").addEventListener("click", () => about.close());
+about.addEventListener("click", event => {
+  if (event.target === about) { about.close(); }
+});
+
+/* ---------- Text size ---------- */
+const smallerText = document.getElementById("smallerText");
+const largerText = document.getElementById("largerText");
+
+function textScaleStep() {
+  const step = TEXT_SCALES.indexOf(parseFloat(readStorage(TEXT_SCALE_KEY)));
+  return step === -1 ? TEXT_SCALES.indexOf(1) : step;
+}
+
+function applyTextScale() {
+  const step = textScaleStep();
+  document.documentElement.style.setProperty("--text-scale", String(TEXT_SCALES[step]));
+  smallerText.disabled = step === 0;
+  largerText.disabled = step === TEXT_SCALES.length - 1;
+}
+
+function changeTextScale(direction) {
+  const step = Math.max(0, Math.min(TEXT_SCALES.length - 1, textScaleStep() + direction));
+  writeStorage(TEXT_SCALE_KEY, String(TEXT_SCALES[step]));
+  applyTextScale();
+}
+
+smallerText.addEventListener("click", () => changeTextScale(-1));
+largerText.addEventListener("click", () => changeTextScale(1));
+
+/* ---------- Updates ---------- */
+/* Home-screen apps on iOS often resume an old copy of the page, so check for a newer deploy on resume. */
+let loadedPageVersion = null;
+
+/* The page and its data files; a change to any of them counts as a new version. */
+const VERSIONED_FILES = [location.pathname, "yasin.js"];
+
+async function fileVersion(path) {
+  const response = await fetch(path, { method: "HEAD", cache: "no-store" });
+  return response.ok ? (response.headers.get("etag") || response.headers.get("last-modified")) : null;
+}
+
+async function livePageVersion() {
+  try {
+    const versions = await Promise.all(VERSIONED_FILES.map(fileVersion));
+    return versions.every(Boolean) ? versions.join("|") : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+document.addEventListener("visibilitychange", async () => {
+  if (document.visibilityState !== "visible" || !loadedPageVersion) { return; }
+  const liveVersion = await livePageVersion();
+  if (liveVersion && liveVersion !== loadedPageVersion) {
+    location.reload();
+  }
+});
+
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  navigator.serviceWorker.register("sw.js").catch(() => { /* offline support is optional */ });
+}
+
+applyTheme();
+applyFont();
+applyTextScale();
+render();
+livePageVersion().then(version => { loadedPageVersion = version; });
+</script>
+</body>
+</html>
