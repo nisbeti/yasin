@@ -23,6 +23,12 @@
          url("https://verses.quran.foundation/fonts/quran/hafs/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff") format("woff");
     font-display: swap;
   }
+  /* KFGQPC Uthmanic Script HAFS (King Fahd Complex), the Uthmani font used by Quran.com, served from its CDN. */
+  @font-face {
+    font-family: "KFGQPC Uthmanic Hafs";
+    src: url("https://verses.quran.foundation/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.woff2") format("woff2");
+    font-display: swap;
+  }
   :root {
     --bg: #f6f1e7;
     --card: #fffdf8;
@@ -181,8 +187,24 @@
   .credit { color: var(--muted); font-size: .85rem; line-height: 1.5; }
   .credit a { color: inherit; }
 
-  /* Arabic font choice: Amiri (default) or IndoPak Nastaleeq. */
-  .when-indopak { display: none; }
+  /* Arabic font choice: Amiri (default), IndoPak Nastaleeq, or KFGQPC Uthmani ("hafs", same text as Amiri). */
+  .when-indopak, .when-hafs, .label-indopak, .label-hafs { display: none; }
+  :root[data-font="indopak"] .label-amiri, :root[data-font="hafs"] .label-amiri { display: none; }
+  :root[data-font="indopak"] .label-indopak, :root[data-font="hafs"] .label-hafs, :root[data-font="hafs"] .when-hafs { display: revert; }
+  :root[data-font="hafs"] .page.quran.arabic .text {
+    font-family: "KFGQPC Uthmanic Hafs", "Amiri Quran", serif;
+  }
+  /* This font draws ۝ as an empty ring, so place the verse number inside it. */
+  :root[data-font="hafs"] .ayah-end { position: relative; }
+  :root[data-font="hafs"] .ayah-digits {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .42em;
+    line-height: 1;
+  }
   :root[data-font="indopak"] .when-amiri { display: none; }
   :root[data-font="indopak"] .when-indopak { display: revert; }
   :root[data-font="indopak"] .page.quran.arabic .text {
@@ -413,7 +435,7 @@ for (let i = 0; i < SURAH.verses.length; i += VERSES_PER_PAGE) {
 }
 
 const POSITION_KEY = "yasin:position";
-/* The IndoPak font switch appears once the verses carry ar_indopak text. */
+/* IndoPak joins the font cycle once the verses carry ar_indopak text. */
 const HAS_INDOPAK = SURAH.verses.every(verse => verse.ar_indopak);
 
 const track = document.getElementById("track");
@@ -490,7 +512,7 @@ function createPage(lang, extraClass = "") {
 
 function cardHtml(positionLabel, lang, body, foot = "") {
   const corner = lang !== "ar"
-    ? `<button type="button" class="lang-toggle" aria-label="Switch between English and Urdu"><span class="when-en">English</span><span class="when-ur" lang="ur">اردو</span></button>` : !HAS_INDOPAK ? "" : `<button type="button" class="font-toggle" aria-label="Switch Arabic font"><span class="when-amiri">Amiri</span><span class="when-indopak">IndoPak</span></button>`;
+    ? `<button type="button" class="lang-toggle" aria-label="Switch between English and Urdu"><span class="when-en">English</span><span class="when-ur" lang="ur">اردو</span></button>` : `<button type="button" class="font-toggle" aria-label="Switch Arabic font"><span class="label-amiri">Amiri</span><span class="label-indopak">IndoPak</span><span class="label-hafs">Uthmani</span></button>`;
   return `
     <article class="card">
       <div class="meta">
@@ -519,7 +541,7 @@ function buildVersePage(verses, position, total, lang) {
   let body;
   if (lang === "ar") {
     const uthmani = verses
-      .map(verse => `${markJalalahArabic(verse.ar)} <span class="ayah-end" ${verseAttrs(verse.n)}>&#x06DD;${toArabicDigits(verse.n)}</span>`)
+      .map(verse => `${markJalalahArabic(verse.ar)} <span class="ayah-end" ${verseAttrs(verse.n)}>&#x06DD;<span class="ayah-digits">${toArabicDigits(verse.n)}</span></span>`)
       .join(" ");
     /* The IndoPak text carries its own numbered verse icons, drawn by the IndoPak font. */
     /* The verse-end sign is one private-use character (U+F500 + verse − 1); wrapping it keeps its look. */
@@ -540,8 +562,8 @@ function buildVersePage(verses, position, total, lang) {
   const indopakCredit = 'IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>.';
   const credit = isOpening
     ? `<span class="credit">${lang === "ar"
-        ? `<span class="when-amiri">النص: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل</a></span><span class="when-indopak" dir="ltr">${indopakCredit}</span>`
-        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-indopak">${indopakCredit}</span> <span class="when-en">Translation: Aisha and Abdalhaqq Bewley.</span><span class="when-ur" lang="ur" dir="rtl">ترجمہ: فتح محمد جالندھری</span>`}</span>`
+        ? `<span class="when-amiri">النص: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل</a></span><span class="when-hafs">، الخط: مجمع الملك فهد</span><span class="when-indopak" dir="ltr">${indopakCredit}</span>`
+        : `<span class="when-amiri">Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</span><span class="when-hafs"> Font: King Fahd Complex (KFGQPC), via <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>.</span><span class="when-indopak">${indopakCredit}</span> <span class="when-en">Translation: Aisha and Abdalhaqq Bewley.</span><span class="when-ur" lang="ur" dir="rtl">ترجمہ: فتح محمد جالندھری</span>`}</span>`
     : "";
   const play = `<button type="button" class="listen play-verses" data-from="${first}" data-to="${last}" data-lang="${lang}">${playLabelHtml(lang, false)}</button>`;
   page.innerHTML = cardHtml(positionLabel, lang, body, play + credit);
@@ -709,17 +731,26 @@ track.addEventListener("click", event => {
 });
 
 /* ---------- Arabic font ---------- */
+/* Each press of the font button moves to the next font in this cycle. */
+const FONTS = HAS_INDOPAK ? ["amiri", "indopak", "hafs"] : ["amiri", "hafs"];
+
+function currentFont() {
+  const font = readStorage(FONT_KEY);
+  return FONTS.includes(font) ? font : "amiri";
+}
+
 function applyFont() {
-  if (HAS_INDOPAK && readStorage(FONT_KEY) === "indopak") {
-    document.documentElement.setAttribute("data-font", "indopak");
-  } else {
+  const font = currentFont();
+  if (font === "amiri") {
     document.documentElement.removeAttribute("data-font");
+  } else {
+    document.documentElement.setAttribute("data-font", font);
   }
 }
 
 track.addEventListener("click", event => {
   if (!event.target.closest(".font-toggle")) { return; }
-  writeStorage(FONT_KEY, readStorage(FONT_KEY) === "indopak" ? "amiri" : "indopak");
+  writeStorage(FONT_KEY, FONTS[(FONTS.indexOf(currentFont()) + 1) % FONTS.length]);
   applyFont();
 });
 
