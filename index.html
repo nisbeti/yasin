@@ -316,6 +316,9 @@
   #about p, #about li { font-size: 1rem; line-height: 1.55; margin: 0 0 .5rem; }
   #about ul { margin: 0; padding-left: 1.2rem; }
   #about a { color: var(--accent); }
+  #about strong { color: var(--ink); }
+  #about .about-options { list-style: none; padding-left: 0; }
+  #about [lang="ur"] { font-family: "Noto Nastaliq Urdu", "Amiri", serif; font-weight: 400; }
   #aboutClose {
     width: 2.1rem;
     height: 2.1rem;
@@ -402,26 +405,44 @@
       <h2 id="aboutTitle">About</h2>
       <button id="aboutClose" type="button" aria-label="Close">×</button>
     </header>
-    <p>Sūrah Yā-Sīn, five verses a page: Arabic first, then English or Urdu.</p>
+    <p>Sūrah Yā-Sīn, five verses a page: the Arabic first, then a translation. Works offline once opened.</p>
 
     <h3>How to use</h3>
     <ul>
       <li>Swipe to move between pages. On a computer, use the side buttons or the arrow keys.</li>
       <li>Tap ▶ Listen to hear a page recited, or tap a verse number to hear that verse.</li>
-      <li>Tap the font name on an Arabic page to switch between Amiri and IndoPak.</li>
-      <li>Tap English on a translation page to switch to Urdu, and back.</li>
-      <li>Use − and + to change the text size.</li>
+      <li>Tap the font name at the top of an Arabic page to change the script.</li>
+      <li>Tap the language name at the top of a translation page to switch between English and Urdu.</li>
+      <li>Use − and + to change the text size, and the moon or sun to switch between dark and light.</li>
       <li>Your place, font, translation, text size and theme are remembered on this device.</li>
+    </ul>
+
+    <h3>Fonts and languages</h3>
+    <ul class="about-options">
+      <li><strong>Amiri</strong>: a classic Naskh script, clear and easy to read.</li>
+      <li><strong>IndoPak</strong>: the Nastaʿlīq-style script of mushafs from South Asia, with its own pause marks.</li>
+      <li><strong>Uthmani</strong>: the King Fahd Complex script used in the Madinah mushaf.</li>
+      <li><strong>English</strong>: the translation by Aisha and Abdalhaqq Bewley.</li>
+      <li><strong lang="ur">اردو</strong> (Urdu): the translation by Fateh Muhammad Jalandhry.</li>
+    </ul>
+
+    <h3>Add it to your home screen</h3>
+    <p>Install it like an app: it opens full screen from its own icon and works without a connection.</p>
+    <ul>
+      <li><strong>iPhone or iPad:</strong> open this page in Safari, tap the Share button (the square with an arrow; on newer iOS it may be inside the ⋯ menu), then <em>Add to Home Screen</em>.</li>
+      <li><strong>Android:</strong> open this page in Chrome, tap the ⋮ menu, then <em>Add to Home screen</em> or <em>Install app</em>.</li>
+      <li><strong>Computer:</strong> in Chrome or Edge, click the install icon at the right of the address bar.</li>
     </ul>
 
     <h3>Credits</h3>
     <ul>
-      <li>Sūrah Yā-Sīn Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</li>
-      <li>IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>. Font served by the <a href="https://quran.foundation" target="_blank" rel="noopener">Quran Foundation</a>.</li>
-      <li>Sūrah Yā-Sīn English translation: Aisha and Abdalhaqq Bewley, <em>The Noble Qur'an</em>, via <a href="https://hadithunlocked.com/quran/en-bewley" target="_blank" rel="noopener">Hadith Unlocked</a>.</li>
-      <li>Urdu translation: Fateh Muhammad Jalandhry, via <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a>.</li>
-      <li>Recitation: Mishary al-Afasy, via <a href="https://everyayah.com" target="_blank" rel="noopener">EveryAyah.com</a>.</li>
+      <li>Arabic text: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil Project</a>.</li>
       <li>Amiri and Amiri Quran fonts: Khaled Hosny, under the SIL Open Font License, via Google Fonts.</li>
+      <li>IndoPak text and font: Ayman Siddiqui and R. Siddiqua, <a href="https://quranwbw.com" target="_blank" rel="noopener">QuranWBW.com</a> and <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>. Font served by the <a href="https://quran.foundation" target="_blank" rel="noopener">Quran Foundation</a>.</li>
+      <li>Uthmani font: KFGQPC Uthmanic Script HAFS, King Fahd Glorious Qur'an Printing Complex, served by the <a href="https://quran.foundation" target="_blank" rel="noopener">Quran Foundation</a>.</li>
+      <li>English translation: Aisha and Abdalhaqq Bewley, <em>The Noble Qur'an</em>, via <a href="https://hadithunlocked.com/quran/en-bewley" target="_blank" rel="noopener">Hadith Unlocked</a>.</li>
+      <li>Urdu translation: Fateh Muhammad Jalandhry, via <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a>. Urdu font: Noto Nastaliq Urdu, under the SIL Open Font License, via Google Fonts.</li>
+      <li>Recitation: Mishary al-Afasy, via <a href="https://everyayah.com" target="_blank" rel="noopener">EveryAyah.com</a>.</li>
     </ul>
   </div>
 </dialog>
