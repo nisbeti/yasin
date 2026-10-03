@@ -195,7 +195,11 @@
     font-family: "KFGQPC Uthmanic Hafs", "Amiri Quran", serif;
   }
   /* This font draws ۝ as an empty ring, so place the verse number inside it. */
-  :root[data-font="hafs"] .ayah-end { position: relative; }
+  /* Amiri needs ۝ and its digits as one run of text to draw the number inside the ring (Safari will not shape
+     across an element boundary), while the Uthmani font needs the digits positioned over its empty ring. */
+  .ring-hafs { display: none; }
+  :root[data-font="hafs"] .ring-amiri { display: none; }
+  :root[data-font="hafs"] .ring-hafs { display: inline; position: relative; }
   :root[data-font="hafs"] .ayah-digits {
     position: absolute;
     inset: 0;
@@ -541,7 +545,7 @@ function buildVersePage(verses, position, total, lang) {
   let body;
   if (lang === "ar") {
     const uthmani = verses
-      .map(verse => `${markJalalahArabic(verse.ar)} <span class="ayah-end" ${verseAttrs(verse.n)}>&#x06DD;<span class="ayah-digits">${toArabicDigits(verse.n)}</span></span>`)
+      .map(verse => `${markJalalahArabic(verse.ar)} <span class="ayah-end" ${verseAttrs(verse.n)}><span class="ring-amiri">&#x06DD;${toArabicDigits(verse.n)}</span><span class="ring-hafs">&#x06DD;<span class="ayah-digits">${toArabicDigits(verse.n)}</span></span></span>`)
       .join(" ");
     /* The IndoPak text carries its own numbered verse icons, drawn by the IndoPak font. */
     /* The verse-end sign is one private-use character (U+F500 + verse − 1); wrapping it keeps its look. */
