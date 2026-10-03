@@ -457,7 +457,7 @@
 </footer>
 
 <div id="fontTip" role="dialog" aria-labelledby="fontTipText" lang="en" hidden>
-  <p id="fontTipText">Tap here to change the Arabic script: Amiri, IndoPak or Uthmani.</p>
+  <p id="fontTipText">Tap here to change the Arabic script: Uthmani, IndoPak or Amiri.</p>
   <div class="tip-actions"><button id="fontTipClose" type="button">Got it</button></div>
 </div>
 
@@ -481,9 +481,9 @@
 
     <h3>Fonts and languages</h3>
     <ul class="about-options">
-      <li><strong>Amiri</strong>: a classic Naskh script, clear and easy to read.</li>
+      <li><strong>Uthmani</strong>: the King Fahd Complex script used in the Madinah mushaf. Shown first.</li>
       <li><strong>IndoPak</strong>: the Nastaʿlīq-style script of mushafs from South Asia, with its own pause marks.</li>
-      <li><strong>Uthmani</strong>: the King Fahd Complex script used in the Madinah mushaf.</li>
+      <li><strong>Amiri</strong>: a classic Naskh script, clear and easy to read.</li>
       <li><strong>English</strong>: the translation by Aisha and Abdalhaqq Bewley.</li>
       <li><strong lang="ur">اردو</strong> (Urdu): the translation by Fateh Muhammad Jalandhry.</li>
     </ul>
@@ -823,11 +823,11 @@ track.addEventListener("click", event => {
 
 /* ---------- Arabic font ---------- */
 /* Each press of the font button moves to the next font in this cycle. */
-const FONTS = HAS_INDOPAK ? ["amiri", "indopak", "hafs"] : ["amiri", "hafs"];
+const FONTS = HAS_INDOPAK ? ["hafs", "indopak", "amiri"] : ["hafs", "amiri"];
 
 function currentFont() {
   const font = readStorage(FONT_KEY);
-  return FONTS.includes(font) ? font : "amiri";
+  return FONTS.includes(font) ? font : FONTS[0];  /* Uthmani until the reader chooses */
 }
 
 function applyFont() {
